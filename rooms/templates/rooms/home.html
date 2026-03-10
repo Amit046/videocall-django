@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoCall — Connect Instantly</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 20%, rgba(99,102,241,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 80%, rgba(16,185,129,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(236,72,153,0.05) 0%, transparent 70%);
+            z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #6366f1, #10b981);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 30px rgba(99,102,241,0.4);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a5b4fc, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        /* Cards grid */
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 780px;
+            width: 100%;
+        }
+
+        @media (max-width: 640px) {
+            .cards { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(99,102,241,0.4);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #9ca3af;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #f3f4f6;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: rgba(99,102,241,0.6);
+            background: rgba(99,102,241,0.08);
+        }
+
+        input[type="text"]::placeholder {
+            color: #4b5563;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            box-shadow: 0 4px 30px rgba(99,102,241,0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 4px 30px rgba(16,185,129,0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Error alert */
+        .alert-error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 10px;
+            padding: 0.9rem 1.2rem;
+            color: #fca5a5;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            max-width: 780px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Features row */
+        .features {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2.5rem;
+            color: #6b7280;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .feature span:first-child {
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">📹</div>
+                <span class="logo-text">VideoCall</span>
+            </div>
+            <p>Crystal-clear video calls. No sign-up required.</p>
+        </header>
+
+        {% if error %}
+        <div class="alert-error">⚠️ {{ error }}</div>
+        {% endif %}
+
+        <div class="cards">
+            <!-- Create Room -->
+            <div class="card">
+                <div class="card-icon">✨</div>
+                <h2>Create a Room</h2>
+                <p>Start a new video call and invite others with a room code.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="host_name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Room Name</label>
+                        <input type="text" name="room_name" placeholder="My Meeting Room">
+                    </div>
+                    <button type="submit" class="btn btn-primary">🚀 Create Room</button>
+                </form>
+            </div>
+
+            <!-- Join Room -->
+            <div class="card">
+                <div class="card-icon">🔗</div>
+                <h2>Join a Room</h2>
+                <p>Have a room code? Enter it below to jump into the call.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="join">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="username" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Room Code</label>
+                        <input type="text" name="room_code" placeholder="Paste room code here" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">📞 Join Room</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature"><span>🔒</span><span>End-to-end encrypted</span></div>
+            <div class="feature"><span>⚡</span><span>WebRTC peer-to-peer</span></div>
+            <div class="feature"><span>💬</span><span>In-call chat</span></div>
+            <div class="feature"><span>🎤</span><span>Audio & video controls</span></div>
+        </div>
+    </div>
+</body>
+</html>
